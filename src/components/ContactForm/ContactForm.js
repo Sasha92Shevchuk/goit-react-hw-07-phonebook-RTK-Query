@@ -1,17 +1,23 @@
 import React from 'react';
 import { Form } from './ContactForm.styled';
 import { Button } from '../Button.styled';
-import { useDispatch } from 'react-redux';
-import { addContact } from 'redux/operations';
+
+import { useAddContactMutation } from 'redux/contactApi';
 
 export default function ContactForm() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch(); - вже не потрібно
+  const [addContact] = useAddContactMutation();
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
     const { name, number } = e.target.elements;
-    dispatch(addContact({ name: name.value, phone: number.value }));
-    e.target.reset();
+    try {
+      await addContact({ name: name.value, phone: number.value });
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      e.target.reset();
+    }
   };
 
   return (
